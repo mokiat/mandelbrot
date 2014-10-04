@@ -16,22 +16,24 @@
         <script src="resources/angular/angular.min.js" type="text/javascript"></script>        
         <script src="resources/oop-js/oop-0.2.0.min.js" type="text/javascript"></script>        
 
+        <script src="resources/graphics.js" type="text/javascript"></script>
+        <script src="resources/mandelbrot.js" type="text/javascript"></script>
         <script src="resources/app.js" type="text/javascript"></script>
     </head>
     <body>
         <div class="page-header">
             <h1>Mandelbrot Set <small>...one of the most beautiful fractals</small></h1>
         </div>
-        <div class="panel panel-default">
+        <div class="panel panel-default" ng-controller="SimulationController as control">
             <div class="panel-body">
-                <canvas width="800" height="600"></canvas>
+                <canvas id="simulationCanvas" width="800" height="600" ng-click="control.onCanvasClick($event)"></canvas>
             </div>
             <div class="panel-footer">
                 <div class="btn-group" data-toggle="buttons">
-                    <label class="btn btn-primary btn-lg active">
-                        <input type="radio" name="options" id="zoomIn" checked><span class="glyphicon glyphicon glyphicon-zoom-in"></span> Zoom In
+                    <label class="btn btn-primary btn-lg active" ng-click="control.onZoomIn()">
+                        <input type="radio" name="options" id="zoomIn" checked ><span class="glyphicon glyphicon glyphicon-zoom-in"></span> Zoom In
                     </label>
-                    <label class="btn btn-primary btn-lg">
+                    <label class="btn btn-primary btn-lg" ng-click="control.onZoomOut ()">
                         <input type="radio" name="options" id="zoomOut"><span class="glyphicon glyphicon glyphicon-zoom-out"></span> Zoom Out
                     </label>
                 </div>
