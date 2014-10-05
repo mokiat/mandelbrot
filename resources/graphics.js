@@ -114,8 +114,36 @@ graphics.ClipArea = oop.class({
     }
 });
 
-// TODO: Rename this to Surface class instead.
-graphics.Graphics = oop.class({
+/**
+ * Represents something that can be
+ * rendered onto.
+ */
+graphics.ISurface = oop.interface({
+    /**
+     * Returns the width of the surface in pixels.
+     */
+    getWidth: function() {},
+    /**
+     * Returns the height of the surface in pixels.
+     */
+    getHeight: function() {},
+    /**
+     * Puts the specified color at the specified X
+     * and Y coordinates on the surface.
+     */
+    putPixel: function(x, y, color) {},
+    /**
+     * Finalizes the rendering by putting all the
+     * changed to the surface on the screen.
+     */
+    swapBuffer: function() {}
+});
+
+/**
+ * Default implementation of the ISurface interface
+ * that uses an HTML5 canvas as a render target.
+ */
+graphics.Surface = oop.class({
     __create__: function(canvas) {
         this.width = canvas.width;
         this.height = canvas.height;
@@ -128,18 +156,6 @@ graphics.Graphics = oop.class({
     getHeight: function() {
         return this.height;
     },
-    getAspectRatio: function() {
-        if (this.height === 0) {
-            return 1.0;
-        }
-        return this.width / this.height;
-    },
-    getIntFromRGB: function(r, g, b) {
-        return ((r * 255 & 0xFF) << 24) |
-                ((g * 255 & 0xFF) << 16) |
-                ((b * 255 & 0xFF) << 8) |
-                0xFF;        
-    },
     putPixel: function(x, y, color) {
         var offset = (x + y * this.width) * 4;
         this.imageData.data[offset++] = (color >> 24) & 0xFF;
@@ -150,5 +166,4 @@ graphics.Graphics = oop.class({
     swapBuffer: function() {
         this.context.putImageData(this.imageData, 0, 0);
     }
-
 });

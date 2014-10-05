@@ -130,52 +130,76 @@ mandelbrot.ColorProvider = oop.class({
     }
 });
 
+
+/**
+ * Represents an algorithm that can render
+ * a Mandelbrot Set or a section of one.
+ */
+mandelbrot.IRenderer = oop.interface({
+    
+    /**
+     * Prepares the specified clip area for
+     * rendering.
+     * <p>
+     * In general, this should render a mask over
+     * the area to indicate to the user to expect
+     * a render operation there.
+     */
+    prepareArea: function(clipArea){},
+    
+    /**
+     * Renders a section of the Mandelbrot Set
+     * to the specified clip area by using
+     * the view port as an indication to which
+     * part of the Mandelbrot Set to render.
+     */
+    renderArea: function(clipArea, viewPort){}
+    
+});
+
+/**
+ * Default implementation of the IRenderer interface.
+ */
 mandelbrot.Renderer = oop.class({
     
-    __create__ : function(graphics) {
-        this.graphics = graphics;        
-        this.clearColor = graphics.getIntFromRGB(0, 0, 0);
-        this.prepareColor = graphics.getIntFromRGB(1, 1, 1);
-        this.precision = 600;
-        this.evaluator = new mandelbrot.Evaluator(this.precision);
-        this.colorProvider = new mandelbrot.ColorProvider(this.precision);
+    __create__ : function(surface, evaluator, colorProvider) {
+        this.surface = surface;        
+        this.evaluator = evaluator;
+        this.colorProvider = colorProvider;
+        
+        this.prepareColor = graphics.getIntFromRGB(1.0, 1.0, 1.0);
+        this.complexNumber = new mandelbrot.ComplexNumber();
     },    
     
-    getMandelbrotColor : function(a, b) {
-        var complexNumber = new mandelbrot.ComplexNumber(a, b);
-        var failedIteration = this.evaluator.getEscapeIteration(complexNumber);
-        return this.colorProvider.getColorForEscapedIteration(failedIteration);
-    },
-                
     prepareArea: function(clipArea) {
-        var startX = clipArea.getX();
-        var endX = startX + clipArea.getWidth();
-        var startY = clipArea.getY();
-        var endY = startY + clipArea.getHeight();
-        for (var y = startY; y < endY; ++y) {
-            for (var x = startX; x < endX; ++x) {
-                this.graphics.putPixel(x, y, this.prepareColor);
+        var endX = clipArea.getX() + clipArea.getWidth();
+        var endY = clipArea.getY() + clipArea.getHeight();
+        
+        for (var y = clipArea.getY(); y < endY; ++y) {
+            for (var x = clipArea.getX(); x < endX; ++x) {
+                this.surface.putPixel(x, y, this.prepareColor);
             }
         }
     },
     
     renderArea: function(clipArea, viewPort) {
-        var horizontalStep = viewPort.getWidth() / clipArea.getWidth();
-        var verticalStep = viewPort.getHeight() / clipArea.getHeight();
-        var valueB = viewPort.getTop();
+        var endX = clipArea.getX() + clipArea.getWidth();
+        var endY = clipArea.getY() + clipArea.getHeight();
         
-        var startX = clipArea.getX();
-        var endX = startX + clipArea.getWidth();
-        var startY = clipArea.getY();
-        var endY = startY + clipArea.getHeight();
-        for (var y = startY; y < endY; ++y) {
-            var valueA = viewPort.getLeft();
-            for (var x = startX; x < endX; ++x) {
-                var color = this.getMandelbrotColor(valueA, valueB);
-                this.graphics.putPixel(x, y, color);
-                valueA += horizontalStep;
+        var horizontalStep = viewPort.getWidth() / (clipArea.getWidth() - 1);
+        var verticalStep = viewPort.getHeight() / (clipArea.getHeight() - 1);
+        
+        this.complexNumber.setImaginary(viewPort.getTop());
+        for (var y = clipArea.getY(); y < endY; ++y) {
+            this.complexNumber.setReal(viewPort.getLeft());
+            for (var x = clipArea.getX(); x < endX; ++x) {
+                var iteration = this.evaluator.getEscapeIteration(this.complexNumber);
+                var color = this.colorProvider.getColorForEscapedIteration(iteration);
+                this.surface.putPixel(x, y, color);
+                this.complexNumber.setReal(this.complexNumber.getReal() + horizontalStep);
             }
-            valueB += verticalStep;
+            this.complexNumber.setImaginary(this.complexNumber.getImaginary() + verticalStep);
         }        
     }
+
 });

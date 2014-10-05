@@ -5,10 +5,13 @@
                                                            
         this.MIN_DEPTH = 1;
         this.MAX_DEPTH = 20;
+        this.ITERATIONS = 600;
             
         var canvas = document.getElementById("simulationCanvas");
-        this.graphics = new graphics.Graphics(canvas);
-        this.mandelbrotRenderer = new mandelbrot.Renderer(this.graphics);
+        this.surface = new graphics.Surface(canvas);
+        var colorProvider = new mandelbrot.ColorProvider(this.ITERATIONS);
+        var evaluator = new mandelbrot.Evaluator(this.ITERATIONS);
+        this.mandelbrotRenderer = new mandelbrot.Renderer(this.surface, evaluator, colorProvider);
         
         this.renderAreas = [];
         this.depth = 1;
@@ -45,8 +48,8 @@
         };
 
         this.centerAt = function(x, y) {
-            var ratioX = x / this.graphics.getWidth();
-            var ratioY = y / this.graphics.getHeight();
+            var ratioX = x / this.surface.getWidth();
+            var ratioY = y / this.surface.getHeight();
             var centerX = this.currentViewPort.getLeft() + ratioX * this.currentViewPort.getWidth();
             var centerY = this.currentViewPort.getTop() + ratioY * this.currentViewPort.getHeight();
             this.currentViewPort.centerAt(centerX, centerY);
@@ -61,8 +64,8 @@
             var clipAreaWidth = this.getClipAreaWidthFromDepth(this.depth);
             var clipAreaHeight = this.getClipAreaHeightFromDepth(this.depth);
             
-            var horizontalNumber = this.graphics.getWidth() / clipAreaWidth;
-            var verticalNumber = this.graphics.getHeight() / clipAreaHeight;
+            var horizontalNumber = this.surface.getWidth() / clipAreaWidth;
+            var verticalNumber = this.surface.getHeight() / clipAreaHeight;
             
             this.renderAreas = [];
             for (var y = 0; y < verticalNumber; ++y) {
@@ -98,10 +101,10 @@
         };
         
         this.createViewPortFromClipArea = function(clipArea) {
-            var ratioX = clipArea.getX() / this.graphics.getWidth();
-            var ratioY = clipArea.getY() / this.graphics.getHeight();
-            var ratioWidth = clipArea.getWidth() / this.graphics.getWidth();
-            var ratioHeight = clipArea.getHeight() / this.graphics.getHeight();
+            var ratioX = clipArea.getX() / this.surface.getWidth();
+            var ratioY = clipArea.getY() / this.surface.getHeight();
+            var ratioWidth = clipArea.getWidth() / this.surface.getWidth();
+            var ratioHeight = clipArea.getHeight() / this.surface.getHeight();
             
             var viewPortLeft = this.currentViewPort.getLeft() + this.currentViewPort.getWidth() * ratioX;
             var viewPortTop = this.currentViewPort.getTop() + this.currentViewPort.getHeight() * ratioY;
@@ -138,7 +141,7 @@
             }
 
             // Render everything to canvas
-            this.graphics.swapBuffer(); 
+            this.surface.swapBuffer(); 
         };
         
         this.scheduleAreas();
