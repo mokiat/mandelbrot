@@ -5,7 +5,7 @@ BooleanTask = oop.class({
     }
 });
 
-describe("task", function() {
+describe("AsyncTaskRunner", function() {
     
     describe("when a task runner and tasks have been created", function() {
         
