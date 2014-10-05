@@ -1,5 +1,9 @@
 oop.namespace("mandelbrot");
 
+/**
+ * The ComplexNumber class represents a math complex
+ * number, comprised of a real and imaginary parts.
+ */
 mandelbrot.ComplexNumber = oop.class({
     __create__: function(real, imaginary) {
         if (real) {
@@ -44,6 +48,49 @@ mandelbrot.ComplexNumber = oop.class({
     }
 });
 
+/**
+ * The IEveluator interface represents an
+ * algorithm that can tell you whether a given
+ * complex is part of the Mandelbrot Set or not.
+ */
+mandelbrot.IEvaluator = oop.interface({
+    
+    /**
+     * Returns the evaluation iteration during which
+     * the complex number was determined NOT to be
+     * part of the Mandelbrot Set. 
+     * <p>
+     * If the complex number is determined to be part 
+     * of the Mandelbrot Set, then the returned value 
+     * is equal to <code>-1</code>.
+     */
+    getEscapeIteration: function(complexNumber){}
+    
+});
+
+/**
+ * Default implementation of the IEvaluator
+ * interface.
+ */
+mandelbrot.Evaluator = oop.class({
+    __create__: function(iterations) {
+        this.iterations = iterations;
+        this.evaluation = new mandelbrot.ComplexNumber();
+    },
+    getEscapeIteration: function(complexNumber) {
+        this.evaluation.setReal(complexNumber.getReal());
+        this.evaluation.setImaginary(complexNumber.getImaginary());
+        for (var i = 0; i < this.iterations; ++i) {
+            if (this.evaluation.getLengthSquared() >= 4.0) {
+                return i;
+            }
+            this.evaluation.square();
+            this.evaluation.inc(complexNumber.getReal(), complexNumber.getImaginary());
+        }
+        return -1;
+    }
+});
+
 mandelbrot.Renderer = oop.class({
     
     __create__ : function(graphics) {
@@ -51,7 +98,7 @@ mandelbrot.Renderer = oop.class({
         this.clearColor = graphics.getIntFromRGB(0, 0, 0);
         this.prepareColor = graphics.getIntFromRGB(1, 1, 1);
         this.precision = 600;
-        this.solver = new mandelbrot.Solver(this.precision);
+        this.evaluator = new mandelbrot.Evaluator(this.precision);
         this.colors = this.generateColors(this.graphics, this.precision);
     },
     
@@ -67,7 +114,8 @@ mandelbrot.Renderer = oop.class({
     },
     
     getMandelbrotColor : function(a, b) {
-        var failedIteration = this.solver.calculateFailedIteration(a, b);
+        var complexNumber = new mandelbrot.ComplexNumber(a, b);
+        var failedIteration = this.evaluator.getEscapeIteration(complexNumber);
         return (failedIteration === -1) ? 0x000000FF : this.colors[failedIteration]; 
     },
                 
@@ -103,26 +151,3 @@ mandelbrot.Renderer = oop.class({
         }        
     }
 });
-
-mandelbrot.Solver = oop.class({
-    
-    __create__ : function(iterations) {
-        this.iterations = iterations;
-        this.evaluation = new mandelbrot.ComplexNumber();
-    },
-    
-    calculateFailedIteration : function(a, b) {
-        this.evaluation.setReal(0.0);
-        this.evaluation.setImaginary(0.0);
-        for (var i = 0; i < this.iterations; ++i) {
-            if (this.evaluation.getLengthSquared() >= 4.0) {
-                return i;
-            }
-            this.evaluation.square();
-            this.evaluation.inc(a, b);
-        }
-        return -1;
-    }
-    
-});
-
