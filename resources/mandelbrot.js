@@ -1,5 +1,49 @@
 oop.namespace("mandelbrot");
 
+mandelbrot.ComplexNumber = oop.class({
+    __create__: function(real, imaginary) {
+        if (real) {
+            this.real = real;
+        } else {
+            this.real = 0.0;
+        }
+        if (imaginary) {
+            this.imaginary = imaginary;
+        } else {
+            this.imaginary = 0.0;
+        }
+    },
+    setReal: function(value) {
+        this.real = value;
+    },
+    getReal: function() {
+        return this.real;
+    },
+    setImaginary: function(value) {
+        this.imaginary = value;
+    }, 
+    getImaginary: function() {
+        return this.imaginary;
+    },
+    getLengthSquared: function() {
+        return this.real * this.real + this.imaginary * this.imaginary;
+    },
+    square : function() {
+        var newReal = this.real * this.real - this.imaginary * this.imaginary;
+        var newImaginary = 2.0 * this.real * this.imaginary;
+        this.real = newReal;
+        this.imaginary = newImaginary;
+    },
+    inc : function(real, imaginary) {
+        this.real += real;
+        this.imaginary += imaginary;
+    },
+    dec: function(real, imaginary) {
+        this.real -= real;
+        this.imaginary -= imaginary;
+    }
+});
+
 mandelbrot.Renderer = oop.class({
     
     __create__ : function(graphics) {
@@ -57,22 +101,6 @@ mandelbrot.Renderer = oop.class({
             }
             valueB += verticalStep;
         }        
-    },
-    
-    Render : function(viewPort) {
-        var stepA = viewPort.Width / this.graphics.Width;
-        var stepB = - viewPort.Height / this.graphics.Height;
-        var currentB = viewPort.GetTop();
-        for (var y = 0; y < this.graphics.Height; ++y) {
-            var currentA = viewPort.GetLeft();
-            for (var x = 0; x < this.graphics.Width; ++x) {
-                var color = this.getMandelbrotColor(currentA, currentB);
-                this.graphics.PutPixel(x, y, color);
-                currentA += stepA;
-            }
-            currentB += stepB;
-        }
-        this.graphics.SwapBuffer();
     }
 });
 
@@ -84,48 +112,17 @@ mandelbrot.Solver = oop.class({
     },
     
     calculateFailedIteration : function(a, b) {
-        this.evaluation.setA(0.0);
-        this.evaluation.setB(0.0);
+        this.evaluation.setReal(0.0);
+        this.evaluation.setImaginary(0.0);
         for (var i = 0; i < this.iterations; ++i) {
             if (this.evaluation.getLengthSquared() >= 4.0) {
                 return i;
             }
             this.evaluation.square();
-            this.evaluation.increase(a, b);
+            this.evaluation.inc(a, b);
         }
         return -1;
     }
     
 });
 
-mandelbrot.ComplexNumber = oop.class({
-    __create__: function() {
-        this.a = 0.0;
-        this.b = 0.0;
-    },
-    increase : function(a, b) {
-        this.a += a;
-        this.b += b;
-    },
-    setA: function(value) {
-        this.a = value;
-    },
-    getA: function() {
-        return this.a;
-    },
-    setB: function(value) {
-        this.b = value;
-    },
-    getB: function() {
-        return this.b;
-    },
-    square : function() {
-        var resultA = this.a * this.a - this.b * this.b;
-        var resultB = 2.0 * this.a * this.b;
-        this.a = resultA;
-        this.b = resultB;
-    },
-    getLengthSquared: function() {
-        return this.a * this.a + this.b * this.b;
-    }
-});
