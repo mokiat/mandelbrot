@@ -70,7 +70,7 @@ describe("ComplexNumber", function() {
             
             it("its values should have changed accordingly", function() {
                 expect(complexNumber.getReal()).toBeCloseTo(1.0);
-                expect(complexNumber.getImaginary).toBeCloseTo(-5.0);
+                expect(complexNumber.getImaginary()).toBeCloseTo(-5.0);
             });
         });
     });
