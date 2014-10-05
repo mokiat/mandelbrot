@@ -38,13 +38,17 @@ mandelbrot.ComplexNumber = oop.class({
         this.real = newReal;
         this.imaginary = newImaginary;
     },
-    inc : function(real, imaginary) {
-        this.real += real;
-        this.imaginary += imaginary;
+    setTo: function(other) {
+        this.real = other.getReal();
+        this.imaginary = other.getImaginary();
     },
-    dec: function(real, imaginary) {
-        this.real -= real;
-        this.imaginary -= imaginary;
+    inc : function(other) {
+        this.real += other.getReal();
+        this.imaginary += other.getImaginary();
+    },
+    dec: function(other) {
+        this.real -= other.getReal();
+        this.imaginary -= other.getImaginary();
     }
 });
 
@@ -78,14 +82,13 @@ mandelbrot.Evaluator = oop.class({
         this.evaluation = new mandelbrot.ComplexNumber();
     },
     getEscapeIteration: function(complexNumber) {
-        this.evaluation.setReal(complexNumber.getReal());
-        this.evaluation.setImaginary(complexNumber.getImaginary());
+        this.evaluation.setTo(complexNumber);
         for (var i = 0; i < this.iterations; ++i) {
             if (this.evaluation.getLengthSquared() >= 4.0) {
                 return i;
             }
             this.evaluation.square();
-            this.evaluation.inc(complexNumber.getReal(), complexNumber.getImaginary());
+            this.evaluation.inc(complexNumber);
         }
         return -1;
     }
