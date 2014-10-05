@@ -1,6 +1,17 @@
 oop.namespace("graphics");
 
 /**
+ * Returns the integer representation of
+ * an RGB color.
+ */
+graphics.getIntFromRGB = function(red, green, blue) {
+    return ((red * 255 & 0xFF) << 24) |
+            ((green * 255 & 0xFF) << 16) |
+            ((blue * 255 & 0xFF) << 8) |
+            0xFF;            
+};
+
+/**
  * Represents the abstract coordinates
  * of an area that is being rendered to.
  */
@@ -103,6 +114,7 @@ graphics.ClipArea = oop.class({
     }
 });
 
+// TODO: Rename this to Surface class instead.
 graphics.Graphics = oop.class({
     __create__: function(canvas) {
         this.width = canvas.width;

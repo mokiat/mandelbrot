@@ -94,6 +94,42 @@ mandelbrot.Evaluator = oop.class({
     }
 });
 
+/**
+ * The IColorProvider interface is reponsible for
+ * providing the colors with which the Mandelbrot Set
+ * will be rendered.
+ */
+mandelbrot.IColorProvider = oop.interface({
+    /**
+     * Returns the color in which a given point of the
+     * coordinate should be drawn depending on the iteration
+     * at which the point was evaluated not to be part of
+     * the Mandelbrot Set, or the reverse.
+     */
+    getColorForEscapedIteration: function(iteration) {}
+});
+
+/**
+ * Default implementation of the IColorProvider interface.
+ */
+mandelbrot.ColorProvider = oop.class({
+    __create__: function(iterations) {
+        this.colors = [0x000000FF];
+        for (var i = 0; i < iterations; ++i) {
+            this.colors[i + 1] = this.createColor(i);
+        }
+    },
+    createColor: function(iteration) {
+        var colorAmount = 1.0 - 30.0 / (30.0 + iteration);
+        var threshold = 1.0 - 250.0 / (250.0 + iteration);
+        var gradient = (0.5 + 0.5 * Math.sin(threshold * 10.0 * Math.PI / 2.0)) * colorAmount;
+        return graphics.getIntFromRGB(gradient, gradient, 0.3 + gradient * 0.7);        
+    },
+    getColorForEscapedIteration: function(iteration) {
+        return this.colors[iteration + 1];
+    }
+});
+
 mandelbrot.Renderer = oop.class({
     
     __create__ : function(graphics) {
@@ -102,24 +138,13 @@ mandelbrot.Renderer = oop.class({
         this.prepareColor = graphics.getIntFromRGB(1, 1, 1);
         this.precision = 600;
         this.evaluator = new mandelbrot.Evaluator(this.precision);
-        this.colors = this.generateColors(this.graphics, this.precision);
-    },
-    
-    generateColors : function(graphics, precision) {
-        var result = [];
-        for (var i = 0; i < precision; ++i) {
-            var colorAmount = 1.0 - 30.0 / (30.0 + i);
-            var threshold = 1.0 - 250.0 / (250.0 + i);
-            var gradient = (0.5 + 0.5 * Math.sin(threshold * 10.0 * Math.PI / 2.0)) * colorAmount;
-            result[i] = graphics.getIntFromRGB(gradient, gradient, 0.3 + gradient * 0.7);
-        }
-        return result;
-    },
+        this.colorProvider = new mandelbrot.ColorProvider(this.precision);
+    },    
     
     getMandelbrotColor : function(a, b) {
         var complexNumber = new mandelbrot.ComplexNumber(a, b);
         var failedIteration = this.evaluator.getEscapeIteration(complexNumber);
-        return (failedIteration === -1) ? 0x000000FF : this.colors[failedIteration]; 
+        return this.colorProvider.getColorForEscapedIteration(failedIteration);
     },
                 
     prepareArea: function(clipArea) {
