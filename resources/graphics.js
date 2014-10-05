@@ -1,39 +1,71 @@
 oop.namespace("graphics");
 
+/**
+ * Represents the abstract coordinates
+ * of an area that is being rendered to.
+ */
 graphics.ViewPort = oop.class({
     __create__: function(left, top, right, bottom) {
-        this.left = left;
-        this.top = top;
-        this.right = right;
-        this.bottom = bottom;
+        if (left) {
+            this.left = left;
+        } else {
+            this.left = 0.0;
+        }
+        if (top) {
+            this.top = top;
+        } else {
+            this.top = 0.0;
+        }
+        if (right) {
+            this.right = right;
+        } else {
+            this.right = 0.0;
+        }
+        if (bottom) {
+            this.bottom = bottom;
+        } else {
+            this.bottom = 0.0;
+        }
+    },
+    setLeft: function(value) {
+        this.left = value;
     },
     getLeft: function() {
         return this.left;
     },
+    setTop: function(value) {
+        this.top = value;
+    },
     getTop: function() {
         return this.top;
+    },
+    setRight: function(value) {
+        this.right = value;
     },
     getRight: function() {
         return this.right;
     },
+    setBottom: function(value) {
+        this.bottom = value;
+    },
     getBottom: function() {
         return this.bottom;
+    },
+    setWidth: function(value) {
+        var horizontalCenter = (this.left + this.right) / 2.0;
+        this.left = horizontalCenter - value / 2.0;
+        this.right = horizontalCenter + value / 2.0;
     },
     getWidth: function() {
         return this.right - this.left;
     },
+    setHeight: function(value) {
+        var verticalCenter = (this.top + this.bottom) / 2.0;
+        this.top = verticalCenter - value / 2.0;
+        this.bottom = verticalCenter + value / 2.0;
+    },
     getHeight: function() {
         return this.bottom - this.top;
-    },
-    scale: function(amount) {
-        var centerX = (this.left + this.right) / 2.0;
-        var centerY = (this.top + this.bottom) / 2.0;
-        var newWidth = this.getWidth() * amount;
-        var newHeight = this.getHeight() * amount;
-        this.left = centerX - newWidth / 2.0;
-        this.right = centerX + newWidth / 2.0;
-        this.top = centerY - newHeight / 2.0;
-        this.bottom = centerY + newHeight / 2.0;
     },
     centerAt: function(x, y) {
         var halfWidth = this.getWidth() / 2.0;
@@ -45,6 +77,11 @@ graphics.ViewPort = oop.class({
     }
 });
 
+/**
+ * Represents the exact clip area
+ * in pixel coordinates to which it is
+ * possible to render.
+ */
 graphics.ClipArea = oop.class({
     __create__: function(x, y, width, height) {
         this.x = x;

@@ -30,7 +30,7 @@
             this.centerAt(x, y);
             if (this.depth < this.MAX_DEPTH) {
                 this.depth++;
-                this.currentViewPort.scale(0.25);
+                this.scale(0.25);
             }
             this.scheduleAreas();
         };
@@ -39,7 +39,7 @@
             this.centerAt(x, y);
             if (this.depth > this.MIN_DEPTH) {
                 this.depth--;
-                this.currentViewPort.scale(4.0);
+                this.scale(4.0);
             }
             this.scheduleAreas();
         };
@@ -50,6 +50,11 @@
             var centerX = this.currentViewPort.getLeft() + ratioX * this.currentViewPort.getWidth();
             var centerY = this.currentViewPort.getTop() + ratioY * this.currentViewPort.getHeight();
             this.currentViewPort.centerAt(centerX, centerY);
+        };
+        
+        this.scale = function(amount) {
+            this.currentViewPort.setWidth(this.currentViewPort.getWidth() * amount);            
+            this.currentViewPort.setHeight(this.currentViewPort.getHeight() * amount);            
         };
         
         this.scheduleAreas = function() {
