@@ -27,6 +27,7 @@
             <h1>Mandelbrot Set <small>...one of the most beautiful fractals</small></h1>
         </div>
         <div class="panel panel-default" ng-controller="SimulationController as control">
+            <div class="panel-heading">Select "Zoom In" or "Zoom Out" and click anywhere on the canvas below.</div>
             <div class="panel-body">
                 <canvas id="simulationCanvas" width="800" height="600" ng-click="control.onCanvasClick($event)"></canvas>
             </div>
