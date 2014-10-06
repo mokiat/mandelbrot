@@ -153,7 +153,13 @@ mandelbrot.IRenderer = oop.interface({
      * the view port as an indication to which
      * part of the Mandelbrot Set to render.
      */
-    renderArea: function(clipArea, viewPort){}
+    renderArea: function(clipArea, viewPort){},
+    
+    /**
+     * Assures that everything is rendered to
+     * the surface.
+     */
+    renderToSurface: function() {}
     
 });
 
@@ -200,6 +206,10 @@ mandelbrot.Renderer = oop.class({
             }
             this.complexNumber.setImaginary(this.complexNumber.getImaginary() + verticalStep);
         }        
+    },
+    
+    renderToSurface: function() {
+        this.surface.swapBuffer();
     }
 
 });

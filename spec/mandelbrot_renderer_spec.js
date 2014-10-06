@@ -88,4 +88,17 @@ describe("Renderer", function() {
         
     });
     
+    describe("when a render to surface is performed", function() {
+        
+        beforeEach(function() {
+            spyOn(surface, 'swapBuffer'); 
+            renderer.renderToSurface();
+        });
+        
+        it("should have asked the surface to swap buffers", function() {
+            expect(surface.swapBuffer).toHaveBeenCalled();
+        });
+        
+    });
+    
 });
