@@ -59,9 +59,11 @@ task.AsyncTaskRunner = oop.class({
     },
     cancelTimer: function() {
         clearTimeout(this.timerId);
+        this.timerId = null;
     },
     executeNextTask: function() {
         if (this.tasks.length === 0) {
+            this.timerId = null;
             return;
         }
         
