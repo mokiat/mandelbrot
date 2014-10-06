@@ -3,66 +3,41 @@
     
     app.controller('SimulationController', ['$interval', function($interval) {
                                                            
-        this.MIN_DEPTH = 1;
-        this.MAX_DEPTH = 20;
         this.ITERATIONS = 600;
             
+        this.isZoom = true;
+        this.renderAreas = [];
+
         var canvas = document.getElementById("simulationCanvas");
         this.surface = new graphics.Surface(canvas);
+
+        var viewPort = new graphics.ViewPort(-2.5, 1.5, 1.5, -1.5);
+        var clipArea = new graphics.ClipArea(0, 0, this.surface.getWidth(), this.surface.getHeight());
+        this.camera = new simulation.Camera(viewPort, clipArea);
+
         var colorProvider = new mandelbrot.ColorProvider(this.ITERATIONS);
         var evaluator = new mandelbrot.Evaluator(this.ITERATIONS);
-        this.mandelbrotRenderer = new mandelbrot.Renderer(this.surface, evaluator, colorProvider);
+        this.mandelbrotRenderer = new mandelbrot.Renderer(this.surface, evaluator, colorProvider);        
         
-        this.renderAreas = [];
-        this.depth = 1;
-        this.currentViewPort = new graphics.ViewPort(-2.5, 1.5, 1.5, -1.5);              
-        this.isZoom = true;
         
         this.onCanvasClick = function(event) {
             // Nasty hack because of Firefox
             var x = event.offsetX? event.offsetX : event.clientX-event.target.offsetLeft;
             var y = event.offsetY? event.offsetY : event.clientY-event.target.offsetTop;
+            
+            var viewPortX = this.camera.getViewPortXFromClipAreaX(x);
+            var viewPortY = this.camera.getViewPortYFromClipAreaY(y);
             if (this.isZoom) {
-                this.zoomIn(x, y);
+                this.camera.zoomInOn(viewPortX, viewPortY);
             } else {
-                this.zoomOut(x, y);
-            }
-        };
-        
-        this.zoomIn = function(x, y) {
-            this.centerAt(x, y);
-            if (this.depth < this.MAX_DEPTH) {
-                this.depth++;
-                this.scale(0.25);
+                this.camera.zoomOutTo(viewPortX, viewPortY);
             }
             this.scheduleAreas();
-        };
-        
-        this.zoomOut = function(x, y) {
-            this.centerAt(x, y);
-            if (this.depth > this.MIN_DEPTH) {
-                this.depth--;
-                this.scale(4.0);
-            }
-            this.scheduleAreas();
-        };
-
-        this.centerAt = function(x, y) {
-            var ratioX = x / this.surface.getWidth();
-            var ratioY = y / this.surface.getHeight();
-            var centerX = this.currentViewPort.getLeft() + ratioX * this.currentViewPort.getWidth();
-            var centerY = this.currentViewPort.getTop() + ratioY * this.currentViewPort.getHeight();
-            this.currentViewPort.centerAt(centerX, centerY);
-        };
-        
-        this.scale = function(amount) {
-            this.currentViewPort.setWidth(this.currentViewPort.getWidth() * amount);            
-            this.currentViewPort.setHeight(this.currentViewPort.getHeight() * amount);            
         };
         
         this.scheduleAreas = function() {
-            var clipAreaWidth = this.getClipAreaWidthFromDepth(this.depth);
-            var clipAreaHeight = this.getClipAreaHeightFromDepth(this.depth);
+            var clipAreaWidth = this.getClipAreaWidthFromDepth(this.camera.getZoomDepth());
+            var clipAreaHeight = this.getClipAreaHeightFromDepth(this.camera.getZoomDepth());
             
             var horizontalNumber = this.surface.getWidth() / clipAreaWidth;
             var verticalNumber = this.surface.getHeight() / clipAreaHeight;
@@ -71,7 +46,7 @@
             for (var y = 0; y < verticalNumber; ++y) {
                 for (var x = 0; x < horizontalNumber; ++x) {
                     var clipArea = new graphics.ClipArea(x * clipAreaWidth, y * clipAreaHeight, clipAreaWidth, clipAreaHeight);
-                    var viewPort = this.createViewPortFromClipArea(clipArea);
+                    var viewPort = this.camera.getSubViewPortFromSubClipArea(clipArea);
                     this.renderAreas.push({
                         clipArea: clipArea,
                         viewPort: viewPort
@@ -98,20 +73,6 @@
             } else {
                 return 60;
             }
-        };
-        
-        this.createViewPortFromClipArea = function(clipArea) {
-            var ratioX = clipArea.getX() / this.surface.getWidth();
-            var ratioY = clipArea.getY() / this.surface.getHeight();
-            var ratioWidth = clipArea.getWidth() / this.surface.getWidth();
-            var ratioHeight = clipArea.getHeight() / this.surface.getHeight();
-            
-            var viewPortLeft = this.currentViewPort.getLeft() + this.currentViewPort.getWidth() * ratioX;
-            var viewPortTop = this.currentViewPort.getTop() + this.currentViewPort.getHeight() * ratioY;
-            var viewPortWidth = this.currentViewPort.getWidth() * ratioWidth;
-            var viewPortHeight = this.currentViewPort.getHeight() * ratioHeight;
-            
-            return new graphics.ViewPort(viewPortLeft, viewPortTop, viewPortLeft + viewPortWidth, viewPortTop + viewPortHeight);
         };
         
         this.onZoomIn = function() {
