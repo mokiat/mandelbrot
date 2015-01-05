@@ -3,7 +3,7 @@
 
 This project is an HTML5 web page showing the beauty of the Mandelbrot Set and fractals in general.
 
-[[screenshots/mandelbrot.png]]
+![](https://github.com/momchil-atanasov/mandelbrot/blob/master/screenshots/mandelbrot.png)
 
 You can access the page on the following link: **[momchil-atanasov.com/mandelbrot/](http://momchil-atanasov.com/mandelbrot/)**
 
