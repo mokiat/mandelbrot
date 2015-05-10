@@ -1,6 +1,8 @@
 [The Mandelbrot Set](http://momchil-atanasov.com/mandelbrot/)
 ==========
 
+![](https://travis-ci.org/momchil-atanasov/mandelbrot.svg?branch=master)
+
 This project is an HTML5 web page showing the beauty of the Mandelbrot Set and fractals in general.
 
 ![](https://github.com/momchil-atanasov/mandelbrot/blob/master/screenshots/mandelbrot.png)
