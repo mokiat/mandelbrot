@@ -6,21 +6,40 @@ import { useState } from 'react';
 
 import Surface from './Graphics/Surface';
 import Renderer from './Mandelbrot/Renderer';
+import { useMemo } from 'react';
 
 export const ZOOM_MODES = Object.freeze({
   ZOOM_IN: 'zoom-in',
   ZOOM_OUT: 'zoom-out',
 });
 
-const Visualization = ({ className, width, height, x, y, pixelsPerUnit }) => {
+const Visualization = ({
+  className,
+  width,
+  height,
+  pointerX,
+  pointerY,
+  pixelsPerUnit,
+  onClick,
+}) => {
   const canvasRef = useRef(null);
-
   const [surface, setSurface] = useState(null);
 
+  const unitWidth = width / pixelsPerUnit;
+  const unitHeight = height / pixelsPerUnit;
+
+  const viewport = useMemo(
+    () => ({
+      left: pointerX - unitWidth / 2,
+      top: pointerY - unitHeight / 2,
+      width: unitWidth,
+      height: unitHeight,
+    }),
+    [pointerX, pointerY, unitWidth, unitHeight]
+  );
+
   useEffect(() => {
-    if (canvasRef.current) {
-      setSurface(new Surface(canvasRef.current));
-    }
+    setSurface(new Surface(canvasRef.current));
   }, [width, height]);
 
   useEffect(() => {
@@ -39,12 +58,7 @@ const Visualization = ({ className, width, height, x, y, pixelsPerUnit }) => {
           width: surface.getWidth(),
           height: surface.getHeight(),
         },
-        {
-          left: -2.5,
-          top: -1.5,
-          width: 4.0,
-          height: 3.0,
-        }
+        viewport
       );
       renderer.prepareArea({
         x: 100,
@@ -55,7 +69,18 @@ const Visualization = ({ className, width, height, x, y, pixelsPerUnit }) => {
 
       surface.swapBuffers();
     }
-  }, [surface, x, y, pixelsPerUnit]);
+  }, [surface, viewport, pixelsPerUnit]);
+
+  const onMouseDown = (e) => {
+    const area = e.target.getBoundingClientRect();
+    const x = (e.clientX - area.left) / (area.right - area.left);
+    const y = (e.clientY - area.top) / (area.bottom - area.top);
+
+    onClick(
+      viewport.left + x * viewport.width,
+      viewport.top + y * viewport.height
+    );
+  };
 
   return (
     <canvas
@@ -64,6 +89,7 @@ const Visualization = ({ className, width, height, x, y, pixelsPerUnit }) => {
       width={width}
       height={height}
       style={{ backgroundColor: 'black' }}
+      onMouseDown={onMouseDown}
     ></canvas>
   );
 };
@@ -71,9 +97,14 @@ const Visualization = ({ className, width, height, x, y, pixelsPerUnit }) => {
 Visualization.propTypes = {
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
-  x: PropTypes.object.isRequired,
-  y: PropTypes.object.isRequired,
-  pixelsPerUnit: PropTypes.object.isRequired,
+  pointerX: PropTypes.number.isRequired,
+  pointerY: PropTypes.number.isRequired,
+  pixelsPerUnit: PropTypes.number.isRequired,
+  onClick: PropTypes.func,
+};
+
+Visualization.defaultProps = {
+  onClick: () => {},
 };
 
 export default Visualization;

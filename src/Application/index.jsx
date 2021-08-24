@@ -16,6 +16,24 @@ import Visualization, { ZOOM_MODES } from '../Visualization';
 
 const Application = ({ classes }) => {
   const [zoomMode, setZoomMode] = useState(ZOOM_MODES.ZOOM_IN);
+  const [pointerX, setPointerX] = useState(-0.5);
+  const [pointerY, setPointerY] = useState(0.0);
+  const [pixelsPerUnit, setPixelsPerUnit] = useState(200);
+
+  const onVisualizationClick = (x, y) => {
+    setPointerX(x);
+    setPointerY(y);
+    switch (zoomMode) {
+      case ZOOM_MODES.ZOOM_IN:
+        setPixelsPerUnit(pixelsPerUnit * 2);
+        break;
+      case ZOOM_MODES.ZOOM_OUT:
+        setPixelsPerUnit(pixelsPerUnit / 2);
+        break;
+      default:
+    }
+  };
+
   return (
     <>
       <AppBar position="static">
@@ -36,9 +54,10 @@ const Application = ({ classes }) => {
             )}
             width={800}
             height={600}
-            x={-1.0}
-            y={0.0}
-            pixelsPerUnit={200}
+            pointerX={pointerX}
+            pointerY={pointerY}
+            pixelsPerUnit={pixelsPerUnit}
+            onClick={onVisualizationClick}
           />
         </Paper>
         <Paper className={classes.paper} elevation={4}>
