@@ -1,12 +1,5 @@
 (function(ns, undefined) {
 
-  ns.getIntFromRGB = function(red, green, blue) {
-    return (0xFF << 24) |
-            ((blue * 255 & 0xFF) << 16) |
-            ((green * 255 & 0xFF) << 8) |
-            (red * 255 & 0xFF);
-  };
-
   ns.ViewPort = class ViewPort {
     constructor(left, top, right, bottom) {
       if (left !== undefined) {
@@ -91,59 +84,6 @@
       this.top = y - halfHeight;
       this.bottom = y + halfHeight;
     }
-  };
-
-  ns.ClipArea = class ClipArea {
-    constructor(x, y, width, height) {
-      this.x = x;
-      this.y = y;
-      this.width = width;
-      this.height = height;
-    }
-
-    getX() {
-      return this.x;
-    }
-
-    getY() {
-      return this.y;
-    }
-
-    getWidth() {
-      return this.width;
-    }
-
-    getHeight() {
-      return this.height;
-    }
-  };
-
-  ns.Surface = class Surface {
-    constructor(canvas) {
-      this.width = canvas.width;
-      this.height = canvas.height;
-      this.context = canvas.getContext("2d");
-      this.imageData = this.context.createImageData(this.width, this.height);
-      this.pixels = new Uint32Array(this.imageData.data.buffer);
-    }
-
-    getWidth() {
-      return this.width;
-    }
-
-    getHeight() {
-      return this.height;
-    }
-
-    putPixel(x, y, color) {
-      let offset = x + y * this.width;
-      this.pixels[offset] = color;
-    }
-
-    swapBuffers() {
-      this.context.putImageData(this.imageData, 0, 0);
-    }
-
   };
 
 })(window.graphics = window.graphics || {});

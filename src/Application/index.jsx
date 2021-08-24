@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import clsx from 'clsx';
+import BigNumber from 'big-number';
 
 import { withStyles } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
@@ -36,6 +37,9 @@ const Application = ({ classes }) => {
             )}
             width={800}
             height={600}
+            x={BigNumber(-1.0)}
+            y={BigNumber(0.0)}
+            pixelsPerUnit={BigNumber(200)}
           />
         </Paper>
         <Paper className={classes.paper} elevation={4}>

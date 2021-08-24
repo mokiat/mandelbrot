@@ -1,10 +1,8 @@
 (function(ns, undefined) {
 
   ns.Task = class Task {
-    constructor() {}
     execute() {}
   };
-
 
   ns.TaskRunner = class AsyncTaskRunner {
     constructor() {
