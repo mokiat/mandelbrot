@@ -1,7 +1,5 @@
-import BigNumber from 'big-number';
-
 export default class ComplexNumber {
-  constructor(real = BigNumber(0.0), imaginary = BigNumber(0.0)) {
+  constructor(real = 0.0, imaginary = 0.0) {
     this.real = real;
     this.imaginary = imaginary;
   }
