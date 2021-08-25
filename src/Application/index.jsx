@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import clsx from 'clsx';
 
 import { withStyles } from '@material-ui/core';
@@ -17,21 +18,22 @@ import Visualization, { ZOOM_MODES } from '../Visualization';
 const CANVAS_WIDTH = 800;
 const CANVAS_HEIGHT = 600;
 
-const Application = ({ classes }) => {
+const Application = ({
+  classes,
+  pointerX,
+  pointerY,
+  pixelsPerUnit,
+  onViewportChange,
+}) => {
   const [zoomMode, setZoomMode] = useState(ZOOM_MODES.ZOOM_IN);
-  const [pointerX, setPointerX] = useState(-0.5);
-  const [pointerY, setPointerY] = useState(0.0);
-  const [pixelsPerUnit, setPixelsPerUnit] = useState(200);
 
   const onVisualizationClick = (x, y) => {
-    setPointerX(x);
-    setPointerY(y);
     switch (zoomMode) {
       case ZOOM_MODES.ZOOM_IN:
-        setPixelsPerUnit(pixelsPerUnit * 2);
+        onViewportChange(x, y, pixelsPerUnit * 2);
         break;
       case ZOOM_MODES.ZOOM_OUT:
-        setPixelsPerUnit(pixelsPerUnit / 2);
+        onViewportChange(x, y, pixelsPerUnit / 2);
         break;
       default:
     }
@@ -100,6 +102,17 @@ const Application = ({ classes }) => {
       </Container>
     </>
   );
+};
+
+Application.propTypes = {
+  pointerX: PropTypes.number.isRequired,
+  pointerY: PropTypes.number.isRequired,
+  pixelsPerUnit: PropTypes.number.isRequired,
+  onViewportChange: PropTypes.func,
+};
+
+Application.defaultProps = {
+  onViewportChange: () => {},
 };
 
 export default withStyles({

@@ -2,11 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import './index.css';
-import Application from './Application';
+import Router from './Router';
 
 ReactDOM.render(
   <React.StrictMode>
-    <Application />
+    <Router />
   </React.StrictMode>,
   document.getElementById('root')
 );
