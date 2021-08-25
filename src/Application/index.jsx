@@ -6,8 +6,8 @@ import AppBar from '@material-ui/core/AppBar';
 import Container from '@material-ui/core/Container';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
+import Link from '@material-ui/core/Link';
 import ZoomInIcon from '@material-ui/icons/ZoomIn';
 import ZoomOutIcon from '@material-ui/icons/ZoomOut';
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
@@ -41,7 +41,14 @@ const Application = ({ classes }) => {
           <Typography variant="h6" className={classes.title}>
             Mandelbrot Set
           </Typography>
-          <Button color="inherit">Source Code</Button>
+          <Link
+            color="inherit"
+            href="http://github.com/mokiat/mandelbrot"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Source Code
+          </Link>
         </Toolbar>
       </AppBar>
       <Container className={classes.container} maxWidth="md">

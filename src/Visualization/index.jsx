@@ -90,7 +90,7 @@ const Visualization = ({
       height={height}
       style={{ backgroundColor: 'black' }}
       onMouseDown={onMouseDown}
-    ></canvas>
+    />
   );
 };
 
