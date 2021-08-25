@@ -76,12 +76,22 @@ const Application = ({ classes }) => {
               size="small"
               value={zoomMode}
               exclusive
-              onChange={(event, newZoomMode) => setZoomMode(newZoomMode)}
+              onChange={(event, newZoomMode) => {
+                newZoomMode && setZoomMode(newZoomMode);
+              }}
             >
-              <ToggleButton value={ZOOM_MODES.ZOOM_IN} aria-label="zoom in">
+              <ToggleButton
+                value={ZOOM_MODES.ZOOM_IN}
+                selected={zoomMode === ZOOM_MODES.ZOOM_IN}
+                aria-label="zoom in"
+              >
                 <ZoomInIcon />
               </ToggleButton>
-              <ToggleButton value={ZOOM_MODES.ZOOM_OUT} aria-label="zoom out">
+              <ToggleButton
+                value={ZOOM_MODES.ZOOM_OUT}
+                selected={zoomMode === ZOOM_MODES.ZOOM_OUT}
+                aria-label="zoom out"
+              >
                 <ZoomOutIcon />
               </ToggleButton>
             </ToggleButtonGroup>
@@ -117,6 +127,7 @@ export default withStyles({
     '&.zoomOut': {
       cursor: 'zoom-out',
     },
+    backgroundColor: 'black',
   },
   overlay: {
     position: 'absolute',
