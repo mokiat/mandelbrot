@@ -14,6 +14,9 @@ import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 
 import Visualization, { ZOOM_MODES } from '../Visualization';
 
+const CANVAS_WIDTH = 800;
+const CANVAS_HEIGHT = 600;
+
 const Application = ({ classes }) => {
   const [zoomMode, setZoomMode] = useState(ZOOM_MODES.ZOOM_IN);
   const [pointerX, setPointerX] = useState(-0.5);
@@ -59,41 +62,30 @@ const Application = ({ classes }) => {
               zoomMode === ZOOM_MODES.ZOOM_IN && 'zoomIn',
               zoomMode === ZOOM_MODES.ZOOM_OUT && 'zoomOut'
             )}
-            width={800}
-            height={600}
+            width={CANVAS_WIDTH}
+            height={CANVAS_HEIGHT}
             pointerX={pointerX}
             pointerY={pointerY}
             pixelsPerUnit={pixelsPerUnit}
             onClick={onVisualizationClick}
           />
-        </Paper>
-        <Paper className={classes.paper} elevation={4}>
-          <Typography>
-            Select what happens when you click on the visualization:
-          </Typography>
-          <ToggleButtonGroup
-            value={zoomMode}
-            exclusive
-            onChange={(event, newZoomMode) => setZoomMode(newZoomMode)}
-            aria-label="visualization zoom mode"
-          >
-            <ToggleButton
-              value={ZOOM_MODES.ZOOM_IN}
-              aria-label="zoom in"
+          <div className={classes.overlay}>
+            <ToggleButtonGroup
+              className={classes.buttonGroup}
+              aria-label="zoom mode"
               size="small"
+              value={zoomMode}
+              exclusive
+              onChange={(event, newZoomMode) => setZoomMode(newZoomMode)}
             >
-              <ZoomInIcon />
-              <Typography>Zoom In</Typography>
-            </ToggleButton>
-            <ToggleButton
-              value={ZOOM_MODES.ZOOM_OUT}
-              aria-label="zoom out"
-              size="small"
-            >
-              <ZoomOutIcon />
-              <Typography>Zoom Out</Typography>
-            </ToggleButton>
-          </ToggleButtonGroup>
+              <ToggleButton value={ZOOM_MODES.ZOOM_IN} aria-label="zoom in">
+                <ZoomInIcon />
+              </ToggleButton>
+              <ToggleButton value={ZOOM_MODES.ZOOM_OUT} aria-label="zoom out">
+                <ZoomOutIcon />
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </div>
         </Paper>
       </Container>
     </>
@@ -112,6 +104,7 @@ export default withStyles({
     textAlign: 'center',
   },
   paper: {
+    position: 'relative',
     margin: '10px auto',
     padding: '10px',
   },
@@ -124,5 +117,13 @@ export default withStyles({
     '&.zoomOut': {
       cursor: 'zoom-out',
     },
+  },
+  overlay: {
+    position: 'absolute',
+    bottom: '20px',
+    right: '20px',
+  },
+  buttonGroup: {
+    backgroundColor: 'white',
   },
 })(Application);
