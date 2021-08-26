@@ -28,15 +28,23 @@ const Application = ({
   const [zoomMode, setZoomMode] = useState(ZOOM_MODES.ZOOM_IN);
 
   const onVisualizationClick = (x, y) => {
+    let newPixelsPerUnit;
     switch (zoomMode) {
       case ZOOM_MODES.ZOOM_IN:
-        onViewportChange(x, y, pixelsPerUnit * 2);
+        newPixelsPerUnit = pixelsPerUnit * 2;
         break;
       case ZOOM_MODES.ZOOM_OUT:
-        onViewportChange(x, y, pixelsPerUnit / 2);
+        newPixelsPerUnit = pixelsPerUnit / 2;
         break;
       default:
+        newPixelsPerUnit = pixelsPerUnit;
     }
+    if (newPixelsPerUnit < 100) {
+      x = -0.5;
+      y = 0.0;
+      newPixelsPerUnit = 100;
+    }
+    onViewportChange(x, y, newPixelsPerUnit);
   };
 
   return (
