@@ -24,7 +24,7 @@ const ApplicationWrapper = () => {
         const encX = encodeURIComponent(newX);
         const encY = encodeURIComponent(newY);
         const encPPU = encodeURIComponent(newPPU);
-        history.push(`/#x=${encX}&y=${encY}&ppu=${encPPU}`);
+        history.push(`#x=${encX}&y=${encY}&ppu=${encPPU}`);
       }}
     />
   );

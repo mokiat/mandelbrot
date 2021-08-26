@@ -1,4 +1,5 @@
 {
+  "homepage": "http://mokiat.com/mandelbrot",
   "name": "mandelbrot",
   "version": "1.0.0",
   "private": true,
@@ -18,11 +19,16 @@
     "use-async-effect": "^2.2.3",
     "web-vitals": "^1.1.2"
   },
+  "devDependencies": {
+    "gh-pages": "^3.2.3"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "yarn run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
