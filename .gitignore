@@ -1,5 +1,5 @@
-# Logs
-/phantomjsdriver.log
+# NodeJS
+node_modules/
 
-# Build
-/target
+# ReactJS
+build/
