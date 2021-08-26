@@ -4,7 +4,7 @@ import ComplexNumber from './Complex';
 import { createPalette } from './Palette';
 import { evalEscapeIteration } from './Eval';
 
-const ITERATIONS = 600;
+const ITERATIONS = 1000;
 const PREPARE_COLOR = rgb(1.0, 1.0, 1.0);
 
 export default class Renderer {
